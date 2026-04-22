@@ -10,11 +10,12 @@ use p256::SecretKey;
 use p256::elliptic_curve::rand_core::OsRng;
 use p256::pkcs8::{DecodePrivateKey, EncodePrivateKey, EncodePublicKey, LineEnding};
 use serde::Serialize;
+use surrealdb::engine::any;
+use surrealdb::engine::any::Any;
 use surrealdb::Surreal;
-use surrealdb::engine::remote::ws::Ws;
 use uuid::Uuid;
 
-const DEFAULT_ENDPOINT: &str = "127.0.0.1:8000";
+const DEFAULT_ENDPOINT: &str = "ws://127.0.0.1:8000";
 const DEFAULT_NAMESPACE: &str = "test";
 const DEFAULT_DATABASE: &str = "test";
 const DEFAULT_ACCESS: &str = "jwt_testbed";
@@ -111,7 +112,7 @@ async fn main() -> Result<()> {
         "Attempting WebSocket authentication with a token that expires in about {JWT_LIFETIME_SECONDS} seconds..."
     ));
 
-    let db = Surreal::new::<Ws>(&endpoint)
+    let db = any::connect(&endpoint)
         .await
         .with_context(|| format!("failed to connect to websocket endpoint {endpoint}"))?;
 
@@ -159,7 +160,7 @@ async fn main() -> Result<()> {
     }
 }
 
-async fn insert_probe(db: &Surreal<surrealdb::engine::remote::ws::Client>, id: &str, phase: &str) -> Result<()> {
+async fn insert_probe(db: &Surreal<Any>, id: &str, phase: &str) -> Result<()> {
     let sql =
         "CREATE type::record('jwt_probe', $id) CONTENT { phase: $phase, created_at: time::now() };";
     let mut response = db
