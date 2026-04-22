@@ -1,0 +1,15 @@
+[package]
+name = "surreal-jwt-testbed"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "1.0.100"
+chrono = { version = "0.4.43", features = ["clock"] }
+jsonwebtoken = { version = "10.3.0", default-features = false, features = ["use_pem"] }
+p256 = { version = "0.13.2", features = ["ecdsa", "pem", "pkcs8"] }
+serde = { version = "1.0.228", features = ["derive"] }
+surrealdb = { path = "../surrealdb/surrealdb" }
+tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread", "time"] }
+uuid = { version = "1.19.0", features = ["v4"] }
